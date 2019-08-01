@@ -169,7 +169,7 @@ func clientAbilityWebsocketEventName(brainKey, abilityKey, eventName string) str
 }
 
 // ClientAdapter returns the client adapter.
-func (s *clientsServer) adaptWebsocketClient(c *astiws.Client) {
+func (s *clientsServer) adaptWebsocketClient(c *astiws.Client) error {
 	// Register client
 	s.ws.AutoRegisterClient(c)
 
@@ -199,6 +199,7 @@ func (s *clientsServer) adaptWebsocketClient(c *astiws.Client) {
 		})
 		return nil
 	})
+	return nil
 }
 
 // handleWebsocketDisconnected handles the disconnected websocket event
@@ -209,8 +210,8 @@ func (s *clientsServer) handleWebsocketDisconnected(c *astiws.Client, eventName 
 
 // handleWebsocketPing handles the ping websocket event
 func (s *clientsServer) handleWebsocketPing(c *astiws.Client, eventName string, payload json.RawMessage) error {
-	if err := c.HandlePing(); err != nil {
-		astilog.Error(errors.Wrap(err, "handling ping failed"))
+	if err := c.ExtendConnection(); err != nil {
+		astilog.Error(errors.Wrap(err, "extending connection failed"))
 	}
 	return nil
 }

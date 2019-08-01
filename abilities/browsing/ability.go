@@ -35,7 +35,7 @@ func (a *Ability) Description() string {
 // Run implements the astibrain.Runnable interface
 func (a *Ability) Run(ctx context.Context) (err error) {
 	// Serve
-	if err = astihttp.Serve(ctx, a.h, func(a net.Addr) {
+	if err = astihttp.Serve(ctx, a.h, "127.0.0.1:", func(a net.Addr) {
 		if err := astiexec.OpenBrowser(ctx, "http://" +a.String()); err != nil {
 			astilog.Error(errors.Wrap(err, "astibrowsing: opening browser failed"))
 		}

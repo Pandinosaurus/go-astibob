@@ -64,9 +64,10 @@ func (s *brainsServer) handleWebsocketGET(rw http.ResponseWriter, r *http.Reques
 }
 
 // ClientAdapter returns the client adapter.
-func (s *brainsServer) adaptWebsocketClient(c *astiws.Client) {
+func (s *brainsServer) adaptWebsocketClient(c *astiws.Client) error {
 	s.ws.AutoRegisterClient(c)
 	c.AddListener(astibrain.WebsocketEventNameRegister, s.handleWebsocketRegistered)
+	return nil
 }
 
 // handleWebsocketRegistered handles the registered websocket event
