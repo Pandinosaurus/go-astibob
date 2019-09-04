@@ -45,42 +45,63 @@ func (w *Worker) dispatchFunc(name string) astibob.DispatchFunc {
 		// Set from
 		m.From = *w.runnableIdentifier(name)
 
-		// Dispatch message to itself
-		// Example: audio input calibration on samples
-		cm := m.Clone()
-		cm.To = w.runnableIdentifier(name)
-		w.d.Dispatch(cm)
-
-		// Lock
-		w.mo.Lock()
-		defer w.mo.Unlock()
-
-		// Get listenables by workers
-		wls, ok := w.ols[name]
-
-		// No listenables for this runnable
-		if !ok {
-			return
+		// Create messages
+		var ms []*astibob.Message
+		if m.To != nil && m.To.Types != nil {
+			if _, ok := m.To.Types[astibob.UIIdentifierType]; ok {
+				cm := m.Clone()
+				cm.To = &astibob.Identifier{Type: astibob.UIIdentifierType}
+				ms = append(ms, cm)
+			}
+			if _, ok := m.To.Types[astibob.WorkerIdentifierType]; ok {
+				ms = append(ms, w.cloneMessageForWorkers(name, m)...)
+			}
+		} else if m.To == nil || (m.To.Type == astibob.WorkerIdentifierType && m.To.Name == nil) {
+			ms = append(ms, w.cloneMessageForWorkers(name, m)...)
+		} else {
+			ms = append(ms, m)
 		}
 
-		// Loop through workers
-		for n, ls := range wls {
-			// No listenable for this worker
-			if _, ok := ls[m.Name]; !ok {
-				continue
-			}
-
-			// Clone message
-			cm := m.Clone()
-
-			// Set to
-			cm.To = astibob.NewWorkerIdentifier(n)
-
-			// Dispatch
-			w.d.Dispatch(cm)
+		// Dispatch messages
+		for _, m := range ms {
+			w.d.Dispatch(m)
 		}
 		return
 	}
+}
+
+func (w *Worker) cloneMessageForWorkers(runnable string, i *astibob.Message) (ms []*astibob.Message) {
+	// Dispatch message to itself
+	// Example: audio input calibration on samples
+	m := i.Clone()
+	m.To = w.runnableIdentifier(runnable)
+	ms = append(ms, m)
+
+	// Lock
+	w.mo.Lock()
+	defer w.mo.Unlock()
+
+	// Get listenables by workers
+	wls, ok := w.ols[runnable]
+
+	// No listenables for this runnable
+	if !ok {
+		return
+	}
+
+	// Loop through workers
+	for n, ls := range wls {
+		// No listenable for this worker
+		if _, ok := ls[m.Name]; !ok {
+			continue
+		}
+
+		// Append
+		m = i.Clone()
+		m.To = astibob.NewWorkerIdentifier(n)
+		ms = append(ms, m)
+	}
+	return
 }
 
 func (w *Worker) startRunnableFromMessage(m *astibob.Message) (err error) {

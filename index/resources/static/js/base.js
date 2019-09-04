@@ -40,7 +40,11 @@ let base = {
                                 menu.init(data.payload)
 
                                 // Custom callback
-                                if (typeof onLoad !== "undefined" && onLoad !== null) onLoad(data.payload)
+                                if (typeof onLoad !== "undefined" && onLoad !== null) {
+                                    onLoad(data.payload)
+                                } else {
+                                    base.finish()
+                                }
                                 break
                         }
 

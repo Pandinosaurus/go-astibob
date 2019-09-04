@@ -10,7 +10,7 @@ import (
 
 // Message names
 const (
-	cmdSayMessage = "cmd.say"
+	cmdSayMessage = "text_to_speech.cmd.say"
 )
 
 type Speaker interface {

@@ -1,0 +1,8 @@
+#content .cell {
+    padding-right: 10px;
+}
+
+#content .toggle {
+    font-size: 8px;
+    display: block;
+}

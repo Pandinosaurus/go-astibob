@@ -1,0 +1,31 @@
+{{ define "title" }}{{ .Worker }} - {{ .Runnable }}{{ end }}
+{{ define "css" }}{{ end }}
+{{ define "html" }}
+<div class="panels">
+    <a href="enrich">
+        <div class="panel">
+            <div class="title">Enrich</div>
+            <div class="description">Use an audio input to record and add speech samples to my dataset</div>
+        </div>
+    </a>
+    <div class="panel">
+        <div class="title">Validate</div>
+        <div class="description">Validate unvalidated speech samples of my dataset</div>
+    </div>
+    <div class="panel">
+        <div class="title">Prepare</div>
+        <div class="description">Prepare validated speech samples of my dataset for training</div>
+    </div>
+    <div class="panel">
+        <div class="title">Train</div>
+        <div class="description">Train prepared speech samples of my dataset</div>
+    </div>
+</div>
+{{ end }}
+{{ define "js" }}
+<script type="text/javascript" src="../routes/static/index.js"></script>
+<script>
+    index.init();
+</script>
+{{ end }}
+{{ template "base" . }}

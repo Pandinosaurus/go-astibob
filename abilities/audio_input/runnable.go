@@ -25,7 +25,7 @@ import (
 
 // Message names
 const (
-	eventSamplesMessage = "event.samples"
+	eventSamplesMessage = "audio_input.event.samples"
 )
 
 // Vars

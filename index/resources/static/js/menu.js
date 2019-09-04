@@ -169,6 +169,8 @@ let menu = {
         // Create toggle cell
         let cell = document.createElement("div")
         cell.class = "cell"
+        cell.style.fontSize = "11px"
+        cell.style.textAlign = "right"
         r.html.wrapper.appendChild(cell)
 
         // Create toggle
