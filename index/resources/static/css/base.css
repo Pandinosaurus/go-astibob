@@ -129,10 +129,16 @@ input[type="text"]:focus {
     vertical-align: top;
 }
 
-#content .header {
+/* header */
+
+.header {
     border-bottom: solid 1px #333;
     font-size: 20px;
-    margin-bottom: 10px;
+    margin: 10px 0;
+}
+
+#content > .header:first-child, div:first-child > .header {
+    margin-top: 0;
 }
 
 /* panels */

@@ -30,7 +30,7 @@ func (i *Index) Serve() {
 	r.GET("/websockets/worker", i.handleWorkerWebsocket)
 
 	// Runnable
-	for _, m := range []string{http.MethodGet, http.MethodPatch, http.MethodPost} {
+	for _, m := range []string{http.MethodDelete, http.MethodGet, http.MethodPatch, http.MethodPost} {
 		r.Handle(m, "/workers/:worker/runnables/:runnable/routes/*path", i.runnableRoutes)
 	}
 	r.GET("/workers/:worker/runnables/:runnable/web/*path", i.runnableWeb)

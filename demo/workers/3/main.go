@@ -4,9 +4,11 @@ import (
 	"flag"
 
 	"github.com/asticode/go-astibob"
+	"github.com/asticode/go-astibob/abilities/audio_input"
+	"github.com/asticode/go-astibob/abilities/speech_to_text"
 	"github.com/asticode/go-astibob/worker"
 	"github.com/asticode/go-astilog"
-	"github.com/asticode/go-astibob/abilities/speech_to_text"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -25,12 +27,55 @@ func main() {
 	})
 	defer w.Close()
 
+	// Create runnable
+	r := speech_to_text.NewRunnable("Speech to Text", nil, speech_to_text.RunnableOptions{
+		SpeechesDirPath: "demo/tmp/speeches",
+	})
+
+	// Initialize runnable
+	if err := r.Init(); err != nil {
+		astilog.Fatal(errors.Wrap(err, "main: initializing runnable failed"))
+	}
+	defer r.Close()
+
 	// Register runnables
 	w.RegisterRunnables(worker.Runnable{
-		Runnable: speech_to_text.NewRunnable("Speech to Text", speech_to_text.RunnableOptions{
-			StoreSamples: false,
-		}),
+		Runnable: r,
 	})
+
+	// Register listenables
+	w.RegisterListenables(
+		worker.Listenable{
+			Listenable: audio_input.NewListenable(audio_input.ListenableOptions{
+				OnSamples: func(from astibob.Identifier, samples []int32, bitDepth int, sampleRate, maxSilenceAudioLevel float64) (err error) {
+					// Send message
+					if err = w.SendMessages("Worker #3", "Speech to Text", speech_to_text.NewSamplesMessage(
+						from,
+						samples,
+						bitDepth,
+						sampleRate,
+						maxSilenceAudioLevel,
+					)); err != nil {
+						err = errors.Wrap(err, "main: sending message failed")
+						return
+					}
+					return
+				},
+			}),
+			Runnable: "Audio input",
+			Worker:   "Worker #2",
+		},
+		worker.Listenable{
+			Listenable: speech_to_text.NewListenable(speech_to_text.ListenableOptions{
+				OnText: func(from astibob.Identifier, text string) (err error) {
+					astilog.Warnf("main: on text: worker: %s - runnable: %s - text: %s", *from.Name, *from.Worker, text)
+					return
+				},
+			}),
+			Runnable: "Speech to Text",
+			Worker:   "Worker #3",
+		},
+	)
 
 	// Handle signals
 	w.HandleSignals()

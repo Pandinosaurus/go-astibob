@@ -53,10 +53,20 @@ func main() {
 		astilog.Fatal(errors.Wrap(err, "main: creating default stream failed"))
 	}
 
+	// Create runnable
+	r := audio_input.NewRunnable("Audio input", s)
+
 	// Register runnables
 	w.RegisterRunnables(worker.Runnable{
 		AutoStart: true,
-		Runnable:  audio_input.NewRunnable("Audio input", s),
+		Runnable:  r,
+	})
+
+	// Register listenables
+	w.RegisterListenables(worker.Listenable{
+		Listenable: r,
+		Runnable:   "Audio input",
+		Worker:     "Worker #2",
 	})
 
 	// Handle signals

@@ -18,17 +18,17 @@ let menu = {
 
     onMessage: function(data) {
         switch (data.name) {
-            case consts.messageNames.eventRunnableCrashed:
-            case consts.messageNames.eventRunnableStarted:
-            case consts.messageNames.eventRunnableStopped:
+            case consts.messageNames.runnableCrashed:
+            case consts.messageNames.runnableStarted:
+            case consts.messageNames.runnableStopped:
                 // Update toggle
                 menu.updateToggle(data)
                 break
-            case consts.messageNames.eventWorkerDisconnected:
+            case consts.messageNames.workerDisconnected:
                 // Remove worker from menu
                 menu.removeWorker(data.payload)
                 break
-            case consts.messageNames.eventWorkerRegistered:
+            case consts.messageNames.workerRegistered:
                 // Add worker to menu
                 menu.addWorker(data.payload)
                 break
@@ -189,9 +189,9 @@ let menu = {
 
             // Add name
             if (r.status === consts.runnableStatuses.stopped) {
-                m.name = consts.messageNames.cmdRunnableStart
+                m.name = consts.messageNames.runnableStart
             } else {
-                m.name = consts.messageNames.cmdRunnableStop
+                m.name = consts.messageNames.runnableStop
             }
 
             // Send message
@@ -212,7 +212,7 @@ let menu = {
             // Runnable exists
             if (typeof runnable !== "undefined") {
                 // Update status
-                runnable.status = (data.name === consts.messageNames.eventRunnableStarted ? consts.runnableStatuses.running : consts.runnableStatuses.stopped)
+                runnable.status = (data.name === consts.messageNames.runnableStarted ? consts.runnableStatuses.running : consts.runnableStatuses.stopped)
 
                 // Update class
                 runnable.html.toggle.className = "toggle " + menu.toggleClass(runnable.status)

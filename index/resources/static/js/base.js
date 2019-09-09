@@ -32,7 +32,7 @@ let base = {
 
                         // Switch on name
                         switch (data.name) {
-                            case consts.messageNames.eventUIWelcome:
+                            case consts.messageNames.uiWelcome:
                                 // Update from
                                 base.from.name = data.payload.name
 
@@ -56,7 +56,7 @@ let base = {
                     },
                     pingFunc: function() {
                         base.sendWebsocketMessage({
-                            name: consts.messageNames.cmdUIPing,
+                            name: consts.messageNames.uiPing,
                             to: {type: consts.identifierTypes.index},
                         })
                     },

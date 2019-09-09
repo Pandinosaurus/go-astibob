@@ -23,10 +23,10 @@ let index = {
 
     onMessage: function(data) {
         switch (data.name) {
-            case consts.messageNames.eventWorkerDisconnected:
+            case consts.messageNames.workerDisconnected:
                 index.removeWorker(data.payload)
                 break
-            case consts.messageNames.eventWorkerRegistered:
+            case consts.messageNames.workerRegistered:
                 index.addWorker(data.payload)
                 break
         }
@@ -62,7 +62,6 @@ let index = {
 
         // Create wrapper
         r.html.wrapper = document.createElement("div")
-        r.html.wrapper.className = "index-worker"
 
         // Create name
         let name = document.createElement("div")
